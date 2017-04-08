@@ -404,7 +404,6 @@ Item AI::random_element(std::vector<Item> container)
 
 // You can add additional methods here for your AI to call
 
-<<<<<<< HEAD
 // Begin section util
 quadrant get_quadrant(int x, int y)
 {
@@ -419,8 +418,6 @@ quadrant get_quadrant(int x, int y)
     return BOTTOM_LEFT;
 }
 // End section util
-=======
->>>>>>> 05e58226cc6e82874bc48e17237132686b64f045
 } // stumped
 
 } // cpp_client
