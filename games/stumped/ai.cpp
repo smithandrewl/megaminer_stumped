@@ -28,6 +28,7 @@ std::string AI::get_name() const
 void AI::start()
 {
     // This is a good place to initialize any variables
+    std::cout << "AI::start()" << std::endl;
     std::random_device rd;
     gen = std::mt19937(rd());
 }
@@ -37,6 +38,7 @@ void AI::start()
 /// </summary>
 void AI::game_updated()
 {
+    std::cout << "AI::game_update()" << std::endl;
     // If a function you call triggers an update this will be called before it returns.
 }
 
@@ -47,6 +49,7 @@ void AI::game_updated()
 /// <param name="reason">An explanation for why you either won or lost</param>
 void AI::ended(bool won, const std::string& reason)
 {
+    std::cout <<"AI::ended()" << std::endl;
     // You can do any cleanup of your AI here.  The program ends when this function returns.
 }
 
