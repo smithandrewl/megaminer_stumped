@@ -18,7 +18,6 @@
 #include "../../joueur/src/attr_wrapper.hpp"
 
 // You can add additional #includes here
-#include "segfault/util.hpp"
 
 namespace cpp_client
 {
@@ -114,6 +113,18 @@ private:
     void harvest(const beaver_ptr beaver);
     void drop(const beaver_ptr beaver);
 };
+
+
+// Begin section util
+enum quadrant {
+    TOP_LEFT,
+    TOP_RIGHT,
+    BOTTOM_LEFT,
+    BOTTOM_RIGHT
+};
+
+quadrant get_quadrant(int x, int y);
+// End section util
 
 } // STUMPED
 
