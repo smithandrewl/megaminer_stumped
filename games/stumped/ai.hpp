@@ -25,6 +25,8 @@ namespace cpp_client
 namespace stumped
 {
 
+    typedef std::shared_ptr<cpp_client::stumped::Beaver_> beaver_ptr;
+
 /// <summary>
 /// This is the header file for building your Stumped AI
 /// </summary>
@@ -104,6 +106,12 @@ std::vector<Tile> find_path(const Tile& start, const Tile& goal);
     // Don't edit these!
     // ####################
 
+private:
+    void build_lodge(const beaver_ptr beaver);
+    void attack(const beaver_ptr beaver);
+    void pickup(beaver_ptr beaver);
+    void harvest(const beaver_ptr beaver);
+    void drop(const beaver_ptr beaver);
 };
 
 } // STUMPED

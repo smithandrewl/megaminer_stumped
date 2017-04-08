@@ -53,6 +53,126 @@ void AI::ended(bool won, const std::string& reason)
     // You can do any cleanup of your AI here.  The program ends when this function returns.
 }
 
+void AI::build_lodge(const beaver_ptr beaver) 
+{
+    // if the beaver has enough branches to build a lodge
+    // and the tile does not already have a lodge, then do so
+    if((beaver->branches + beaver->tile->branches) >= player->branches_to_build_lodge && beaver->tile->lodge_owner)
+    {
+        std::cout << "Beaver #" << beaver->id << " building lodge" << std::endl;
+        beaver->build_lodge();
+    }
+}
+
+void AI::attack(const beaver_ptr beaver)
+{
+    // look at all our neighbor tiles and if they have a beaver attack it!
+    auto neighbors = beaver->tile->get_neighbors();
+    std::shuffle(neighbors.begin(), neighbors.end(), gen);
+    for(const auto& neighbor : neighbors)
+    {
+        if(neighbor->beaver)
+        {
+            std::cout << "Beaver #" << beaver->id << " attacking beaver #"
+                        << neighbor->beaver->id << std::endl;
+            beaver->attack(neighbor->beaver);
+            break;
+        }
+    }
+}
+
+void AI::pickup(beaver_ptr beaver) 
+{
+    // how much this beaver is carrying, used for calculations
+    const auto load = beaver->branches + beaver->food;
+    // make an array of our neighboring tiles + our tile as all can be picked up from
+    auto pickup_tiles = beaver->tile->get_neighbors();
+    pickup_tiles.push_back(beaver->tile);
+    std::shuffle(pickup_tiles.begin(), pickup_tiles.end(), gen);
+
+    // if the beaver can carry more resources, try to pick something up
+    if(load < beaver->job->carry_limit)
+    {
+        for(const auto& tile : pickup_tiles)
+        {
+            // try to pickup branches
+            if (tile->branches > 0)
+            {
+                std::cout << "Beaver #" << beaver->id << " picking up branches" << std::endl;
+                beaver->pickup(tile, "branches", 1);
+                break;
+            }
+            // try to pickup food
+            else if (tile->food > 0)
+            {
+                std::cout << "Beaver #" << beaver->id << " picking up food" << std::endl;
+                beaver->pickup(tile, "food", 1);
+                break;
+            }
+        }
+    }
+}
+
+void AI::harvest(const beaver_ptr beaver) {
+    // how much this beaver is carrying, used for calculations
+    const auto load = beaver->branches + beaver->food;
+
+    // if we can carry more, try to harvest something
+    if(load < beaver->job->carry_limit)
+    {
+        // try to find a neighboring tile with a spawner on it to harvest from
+        auto neighbors = beaver->tile->get_neighbors();
+        std::shuffle(neighbors.begin(), neighbors.end(), gen);
+        for(const auto& neighbor : neighbors)
+        {
+            // if it has a spawner on that tile, harvest from it
+            if(neighbor->spawner)
+            {
+                std::cout << "Beaver #"  << beaver->id << " harvesting spawner #"
+                            << neighbor->spawner->id << std::endl;
+                beaver->harvest(neighbor->spawner);
+                break;
+            }
+        }
+    }
+}
+
+void AI::drop(const beaver_ptr beaver) 
+{
+    // choose a random tile from our neighbors + out tile to drop stuff on
+    auto drop_tiles = beaver->tile->get_neighbors();
+    drop_tiles.push_back(beaver->tile);
+    std::shuffle(drop_tiles.begin(), drop_tiles.end(), gen);
+
+    // find a valid tile to drop resources onto
+    Tile tile_to_drop_on = nullptr;
+    for(const auto& tile : drop_tiles)
+    {
+        if(!tile->spawner)
+        {
+            tile_to_drop_on = tile;
+            break;
+        }
+    }
+
+    // if there is a tile that resources can be dropped on
+    if(tile_to_drop_on)
+    {
+        // if we have branches to drop
+        if(beaver->branches > 0)
+        {
+            std::cout << "Beaver #"  << beaver->id << " dropping 1 branch" << std::endl;
+            beaver->drop(tile_to_drop_on, "branches", 1);
+        }
+        // or if we have food to drop
+        else if(beaver->food > 0)
+        {
+            std::cout << "Beaver #"  << beaver->id << " dropping 1 food" << std::endl;
+            beaver->drop(tile_to_drop_on, "food", 1);
+        }
+    }
+}
+
 /// <summary>
 /// This is called every time it is this AI.player's turn.
 /// </summary>
@@ -117,125 +237,31 @@ bool AI::run_turn()
             std::shuffle(actions.begin(), actions.end(), gen);
             const auto action = actions.front();
 
-            // how much this beaver is carrying, used for calculations
-            const auto load = beaver->branches + beaver->food;
-
             switch(action.front()) // just look at the first character
             {
             case 'b': // action == "buildLodge"
             {
-                // if the beaver has enough branches to build a lodge
-                //   and the tile does not already have a lodge, then do so
-                if((beaver->branches + beaver->tile->branches) >= player->branches_to_build_lodge && beaver->tile->lodge_owner)
-                {
-                    std::cout << "Beaver #" << beaver->id << " building lodge" << std::endl;
-                    beaver->build_lodge();
-                }
+                build_lodge(beaver);
                 break;
             }
             case 'a': // action == "attack"
             {
-                // look at all our neighbor tiles and if they have a beaver attack it!
-                auto neighbors = beaver->tile->get_neighbors();
-                std::shuffle(neighbors.begin(), neighbors.end(), gen);
-                for(const auto& neighbor : neighbors)
-                {
-                    if(neighbor->beaver)
-                    {
-                        std::cout << "Beaver #" << beaver->id << " attacking beaver #"
-                                  << neighbor->beaver->id << std::endl;
-                        beaver->attack(neighbor->beaver);
-                        break;
-                    }
-                }
+                attack(beaver);
                 break;
             }
             case 'p': // action == "pickup"
             {
-                // make an array of our neighboring tiles + our tile as all can be picked up from
-                auto pickup_tiles = beaver->tile->get_neighbors();
-                pickup_tiles.push_back(beaver->tile);
-                std::shuffle(pickup_tiles.begin(), pickup_tiles.end(), gen);
-
-                // if the beaver can carry more resources, try to pick something up
-                if(load < beaver->job->carry_limit)
-                {
-                    for(const auto& tile : pickup_tiles)
-                    {
-                        // try to pickup branches
-                        if (tile->branches > 0)
-                        {
-                            std::cout << "Beaver #" << beaver->id << " picking up branches" << std::endl;
-                            beaver->pickup(tile, "branches", 1);
-                            break;
-                        }
-                        // try to pickup food
-                        else if (tile->food > 0)
-                        {
-                            std::cout << "Beaver #" << beaver->id << " picking up food" << std::endl;
-                            beaver->pickup(tile, "food", 1);
-                            break;
-                        }
-                    }
-                }
+                pickup(beaver);
                 break;
             }
             case 'd': // action == "drop"
             {
-                // choose a random tile from our neighbors + out tile to drop stuff on
-                auto drop_tiles = beaver->tile->get_neighbors();
-                drop_tiles.push_back(beaver->tile);
-                std::shuffle(drop_tiles.begin(), drop_tiles.end(), gen);
-
-                // find a valid tile to drop resources onto
-                Tile tile_to_drop_on = nullptr;
-                for(const auto& tile : drop_tiles)
-                {
-                    if(!tile->spawner)
-                    {
-                        tile_to_drop_on = tile;
-                        break;
-                    }
-                }
-
-                // if there is a tile that resources can be dropped on
-                if(tile_to_drop_on)
-                {
-                    // if we have branches to drop
-                    if(beaver->branches > 0)
-                    {
-                        std::cout << "Beaver #"  << beaver->id << " dropping 1 branch" << std::endl;
-                        beaver->drop(tile_to_drop_on, "branches", 1);
-                    }
-                    // or if we have food to drop
-                    else if(beaver->food > 0)
-                    {
-                        std::cout << "Beaver #"  << beaver->id << " dropping 1 food" << std::endl;
-                        beaver->drop(tile_to_drop_on, "food", 1);
-                    }
-                }
+                drop(beaver);
                 break;
             }
             case 'h': // action == "harvest"
             {
-                // if we can carry more, try to harvest something
-                if(load < beaver->job->carry_limit)
-                {
-                    // try to find a neighboring tile with a spawner on it to harvest from
-                    auto neighbors = beaver->tile->get_neighbors();
-                    std::shuffle(neighbors.begin(), neighbors.end(), gen);
-                    for(const auto& neighbor : neighbors)
-                    {
-                        // if it has a spawner on that tile, harvest from it
-                        if(neighbor->spawner)
-                        {
-                            std::cout << "Beaver #"  << beaver->id << " harvesting spawner #"
-                                      << neighbor->spawner->id << std::endl;
-                            beaver->harvest(neighbor->spawner);
-                            break;
-                        }
-                    }
-                }
+                harvest(beaver);
                 break;
             }
             }
