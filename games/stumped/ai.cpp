@@ -66,7 +66,6 @@ void AI::build_lodge(const beaver_ptr beaver)
 
 void AI::attack(const beaver_ptr beaver)
 {
-    /*
     // look at all our neighbor tiles and if they have a beaver attack it!
     auto neighbors = beaver->tile->get_neighbors();
 
@@ -94,9 +93,6 @@ void AI::attack(const beaver_ptr beaver)
 		          << attacked_beaver->beaver->id << std::endl;
 		beaver->attack(attacked_beaver->beaver);
 	}
-
-    */
-
 }
 
 void AI::pickup(beaver_ptr beaver)
