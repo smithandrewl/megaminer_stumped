@@ -56,14 +56,6 @@ void AI::ended(bool won, const std::string& reason)
 /// <returns>Represents if you want to end your turn. True means end your turn, False means to keep your turn going and re-call this function.</returns>
 bool AI::run_turn()
 {
-    // This is your Stumped ShellAI
-    // ShellAI is intended to be a simple AI that does everything possible in the game, but plays the game very poorly
-    // This example code does the following:
-    // 1. Grabs a single beaver
-    // 2. tries to move the beaver
-    // 3. tries to do one of the 5 actions on it
-    // 4. Grabs a lodge and tries to recruit a new beaver
-
     // First let's do a simple print statement telling us what turn we are on
     std::cout << "My turn " << game->current_turn << std::endl;
 
@@ -147,7 +139,7 @@ bool AI::run_turn()
                 {
                     if(neighbor->beaver)
                     {
-                        std::cout << "Beaver #" << beaver->id << " attacking beaver #" 
+                        std::cout << "Beaver #" << beaver->id << " attacking beaver #"
                                   << neighbor->beaver->id << std::endl;
                         beaver->attack(neighbor->beaver);
                         break;
