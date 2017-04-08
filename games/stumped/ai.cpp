@@ -53,7 +53,7 @@ void AI::ended(bool won, const std::string& reason)
     // You can do any cleanup of your AI here.  The program ends when this function returns.
 }
 
-void AI::build_lodge(const beaver_ptr beaver) 
+void AI::build_lodge(const beaver_ptr beaver)
 {
     // if the beaver has enough branches to build a lodge
     // and the tile does not already have a lodge, then do so
@@ -68,20 +68,27 @@ void AI::attack(const beaver_ptr beaver)
 {
     // look at all our neighbor tiles and if they have a beaver attack it!
     auto neighbors = beaver->tile->get_neighbors();
-    std::shuffle(neighbors.begin(), neighbors.end(), gen);
-    for(const auto& neighbor : neighbors)
-    {
-        if(neighbor->beaver)
-        {
-            std::cout << "Beaver #" << beaver->id << " attacking beaver #"
-                        << neighbor->beaver->id << std::endl;
-            beaver->attack(neighbor->beaver);
-            break;
-        }
-    }
+
+	for(auto nit = neighbors.begin(); nit != neighbors.end(); nit++)
+	{ //this for loop removes all adjacent tiles without beavers in them
+		if(!(*nit)->beaver)
+			neighbors.erase(nit);
+	}
+
+	auto attacked_beaver = neighbors[0];
+
+	for(const auto& neighbor : neighbors)
+	{
+		if(neighbor->beaver->health < attacked_beaver->beaver->health)
+			attacked_beaver = neighbor;
+	}
+
+	std::cout << "Beaver #" << beaver->id << " attacking beaver #"
+	          << attacked_beaver->beaver->id << std::endl;
+	beaver->attack(attacked_beaver->beaver);
 }
 
-void AI::pickup(beaver_ptr beaver) 
+void AI::pickup(beaver_ptr beaver)
 {
     // how much this beaver is carrying, used for calculations
     const auto load = beaver->branches + beaver->food;
@@ -137,7 +144,7 @@ void AI::harvest(const beaver_ptr beaver) {
     }
 }
 
-void AI::drop(const beaver_ptr beaver) 
+void AI::drop(const beaver_ptr beaver)
 {
     // choose a random tile from our neighbors + out tile to drop stuff on
     auto drop_tiles = beaver->tile->get_neighbors();
