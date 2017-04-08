@@ -49,6 +49,7 @@ void AI::game_updated()
 /// <param name="reason">An explanation for why you either won or lost</param>
 void AI::ended(bool won, const std::string& reason)
 {
+    test();
     std::cout <<"AI::ended()" << std::endl;
     // You can do any cleanup of your AI here.  The program ends when this function returns.
 }
