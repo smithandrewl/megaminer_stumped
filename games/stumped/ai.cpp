@@ -76,17 +76,24 @@ void AI::attack(const beaver_ptr beaver)
 			neighbors.erase(nit);
 	}
 
-	auto attacked_beaver = neighbors[0];
+	auto nit = neighbors.begin();
 
-	for(const auto& neighbor : neighbors)
+	if(nit == neighbors.end())
+		std::cout << "Nothing to attack!\n";
+	else
 	{
-		if(neighbor->beaver->health < attacked_beaver->beaver->health)
-			attacked_beaver = neighbor;
-	}
+		auto attacked_beaver = neighbors[0];
 
-	std::cout << "Beaver #" << beaver->id << " attacking beaver #"
-	          << attacked_beaver->beaver->id << std::endl;
-	beaver->attack(attacked_beaver->beaver);
+		for(const auto& neighbor : neighbors)
+		{
+			if(neighbor->beaver->health < attacked_beaver->beaver->health)
+				attacked_beaver = neighbor;
+		}
+
+		std::cout << "Beaver #" << beaver->id << " attacking beaver #"
+		          << attacked_beaver->beaver->id << std::endl;
+		beaver->attack(attacked_beaver->beaver);
+	}
 }
 
 void AI::pickup(beaver_ptr beaver)
@@ -404,11 +411,11 @@ quadrant get_quadrant(int x, int y)
     bool isOnTop = y >= 10;
     bool isRight = x >= 16;
 
-    
-    if(isOnTop && isRight) return TOP_RIGHT; 
+
+    if(isOnTop && isRight) return TOP_RIGHT;
     if(isOnTop)            return TOP_LEFT;
     if(isRight)            return BOTTOM_RIGHT;
-    
+
     return BOTTOM_LEFT;
 }
 // End section util
