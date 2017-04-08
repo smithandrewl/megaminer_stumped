@@ -49,7 +49,6 @@ void AI::game_updated()
 /// <param name="reason">An explanation for why you either won or lost</param>
 void AI::ended(bool won, const std::string& reason)
 {
-    test();
     std::cout <<"AI::ended()" << std::endl;
     // You can do any cleanup of your AI here.  The program ends when this function returns.
 }
@@ -67,6 +66,7 @@ void AI::build_lodge(const beaver_ptr beaver)
 
 void AI::attack(const beaver_ptr beaver)
 {
+    /*
     // look at all our neighbor tiles and if they have a beaver attack it!
     auto neighbors = beaver->tile->get_neighbors();
 
@@ -94,6 +94,9 @@ void AI::attack(const beaver_ptr beaver)
 		          << attacked_beaver->beaver->id << std::endl;
 		beaver->attack(attacked_beaver->beaver);
 	}
+
+    */
+
 }
 
 void AI::pickup(beaver_ptr beaver)
@@ -405,6 +408,7 @@ Item AI::random_element(std::vector<Item> container)
 
 // You can add additional methods here for your AI to call
 
+<<<<<<< HEAD
 // Begin section util
 quadrant get_quadrant(int x, int y)
 {
@@ -419,6 +423,8 @@ quadrant get_quadrant(int x, int y)
     return BOTTOM_LEFT;
 }
 // End section util
+=======
+>>>>>>> 05e58226cc6e82874bc48e17237132686b64f045
 } // stumped
 
 } // cpp_client
