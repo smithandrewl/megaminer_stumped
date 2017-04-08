@@ -116,17 +116,6 @@ private:
 };
 
 
-// Begin section util
-enum quadrant {
-    TOP_LEFT,
-    TOP_RIGHT,
-    BOTTOM_LEFT,
-    BOTTOM_RIGHT
-};
-
-quadrant get_quadrant(int x, int y);
-// End section util
-
 } // STUMPED
 
 } // cpp_client
