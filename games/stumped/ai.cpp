@@ -19,7 +19,7 @@ namespace stumped
 std::string AI::get_name() const
 {
     // REPLACE WITH YOUR TEAM NAME!
-    return "Stumped C++ Player";
+    return "The Segfaults";
 }
 
 /// <summary>
